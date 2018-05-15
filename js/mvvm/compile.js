@@ -141,7 +141,7 @@ var compileUtil = {
         var updaterFn = updater[dir + 'Updater'];
         //执行更新函数更新节点
         updaterFn && updaterFn(node, this._getVMVal(vm, exp));
-
+        //当表达式中
         new Watcher(vm, exp, function(value, oldValue) {
             updaterFn && updaterFn(node, value, oldValue);
         });

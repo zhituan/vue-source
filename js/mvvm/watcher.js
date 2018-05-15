@@ -11,10 +11,14 @@ Watcher.prototype = {
         this.run();
     },
     run: function() {
+        //得到最新的值
         var value = this.get();
+        //德大旧的值
         var oldVal = this.value;
+
         if (value !== oldVal) {
             this.value = value;
+            //调用用于更新节点的
             this.cb.call(this.vm, value, oldVal);
         }
     },
@@ -34,14 +38,20 @@ Watcher.prototype = {
         // 触发了addDep(), 在整个forEach过程，当前wacher都会加入到每个父级过程属性的dep
         // 例如：当前watcher的是'child.child.name', 那么child, child.child, child.child.name这三个属性的dep都会加入当前watcher
         if (!this.depIds.hasOwnProperty(dep.id)) {
+            //将当前的watcher添加到dep中，建立从dep到watcher的关系
             dep.addSub(this);
+            //将dep添加到watcher中，建立从watcher到dep的关系
             this.depIds[dep.id] = dep;
         }
     },
     get: function() {
+        //给dep指定当前的watcher
         Dep.target = this;
+        //得到当前表达式所对应的属性（内部会导致get调用，从而建立dep与watcher之间的关系）
         var value = this.getVMVal();
+        //去掉dep中关联的当前watcher
         Dep.target = null;
+        // 返回属性值
         return value;
     },
 
