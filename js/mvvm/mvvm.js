@@ -11,6 +11,7 @@ function MVVM(options) {//vm的构造函数MVVM
     });
     //劫持或监视data中所有层次属性
     observe(data, this);
+    /*模板解析*/
     //创建一个用于编译模板的对象compile （）
     //当没有传入指定管理的区域时，默认为body。当el有值时，将通过选择器获取到指定的dom节点
     this.$compile = new Compile(options.el || document.body, this)

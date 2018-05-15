@@ -7,7 +7,7 @@ function Observer(data) {
 
 Observer.prototype = {
     walk: function(data) {
-        var me = this;
+        var me = this;//this 表示Observer
         //遍历data外层的所有属性
         Object.keys(data).forEach(function(key) {
             //指定的属性进行数据劫持
@@ -18,10 +18,12 @@ Observer.prototype = {
    /* convert: function(key, val) {
         this.defineReactive(this.data, key, val);
     },*/
-
+    //属性发生改变，就会响应的去改变页面（每个属性都会触发这个事件）
+    //对data中所有层次的属性进行劫持/监视
     defineReactive: function(data, key, val) {
         var dep = new Dep();//为当前的属性值创建dep对象
         //通过间接递归调用实现对层次属性的劫持
+        //对属值进行数据劫持，当val是对象时，从新调用observe，进入defineReactive
         var childObj = observe(val);
         //给data重新定义指定名称的属性（使用属性描述符）
         Object.defineProperty(data, key, {
@@ -36,7 +38,7 @@ Observer.prototype = {
                 }
                 return val;
             },
-            //当data中当前属性值发生了改变
+            //当data中当前属性值发生了改变进行调用，最终目的是更新界面
             set: function(newVal) {
                 if (newVal === val) {
                     return;
@@ -87,6 +89,7 @@ Dep.prototype = {
     notify: function() {
         //遍历所有相关 的watcher，去更新
         this.subs.forEach(function(sub) {
+            //该方法跳转到watcher中的updata中
             sub.update();
         });
     }

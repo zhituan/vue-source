@@ -117,16 +117,20 @@ var compileUtil = {
     },
 
     model: function(node, vm, exp) {
+        //初始化显示，监视表达式实现更新显示
         this.bind(node, vm, exp, 'model');
 
         var me = this,
+            //得到表达式的值
             val = this._getVMVal(vm, exp);
+        //给节点绑定input监听，当input.value噶发省改变时，会自动调用
         node.addEventListener('input', function(e) {
+            //得到input的最新值
             var newValue = e.target.value;
             if (val === newValue) {
                 return;
             }
-
+            //将最新值保存到表达式对应的属性上（会触发setter---更新页面中相应的节点）
             me._setVMVal(vm, exp, newValue);
             val = newValue;
         });
@@ -137,11 +141,14 @@ var compileUtil = {
     },
     // 调用对应的节点更新函数去更新节点
     bind: function(node, vm, exp, dir) {
+        //前两句进行初始化显示
         //根据指令名得到对应的节点更新函数
         var updaterFn = updater[dir + 'Updater'];
         //执行更新函数更新节点
         updaterFn && updaterFn(node, this._getVMVal(vm, exp));
-        //当表达式中
+
+
+        //当表达式相关的属性发生变化就会自动调用function
         new Watcher(vm, exp, function(value, oldValue) {
             updaterFn && updaterFn(node, value, oldValue);
         });

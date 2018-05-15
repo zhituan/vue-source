@@ -1,11 +1,12 @@
+//watcher是再compile中的bind中创建的
 function Watcher(vm, exp, cb) {
+    //cd是创建watcher中的callback，用于更新节点的回调函数
     this.cb = cb;
     this.vm = vm;
-    this.exp = exp;
-    this.depIds = {};
-    this.value = this.get();
+    this.exp = exp;//表达式
+    this.depIds = {};//保存相关dep的对象容器
+    this.value = this.get();//表达式所对应的值
 }
-
 Watcher.prototype = {
     update: function() {
         this.run();
@@ -13,7 +14,7 @@ Watcher.prototype = {
     run: function() {
         //得到最新的值
         var value = this.get();
-        //德大旧的值
+        //得到旧的值
         var oldVal = this.value;
 
         if (value !== oldVal) {
@@ -37,13 +38,15 @@ Watcher.prototype = {
         // 这一步是在 this.get() --> this.getVMVal() 里面完成，forEach时会从父级开始取值，间接调用了它的getter
         // 触发了addDep(), 在整个forEach过程，当前wacher都会加入到每个父级过程属性的dep
         // 例如：当前watcher的是'child.child.name', 那么child, child.child, child.child.name这三个属性的dep都会加入当前watcher
-        if (!this.depIds.hasOwnProperty(dep.id)) {
+        //判断关系是否建立过，只有没有建立过才会进入
+        if (!this.depIds.hasOwnProperty(dep.id)) {//dep的id作为属性名
             //将当前的watcher添加到dep中，建立从dep到watcher的关系
-            dep.addSub(this);
+            dep.addSub(this);//this是watcher
             //将dep添加到watcher中，建立从watcher到dep的关系
             this.depIds[dep.id] = dep;
         }
     },
+    //获取表达式所对应的值
     get: function() {
         //给dep指定当前的watcher
         Dep.target = this;
